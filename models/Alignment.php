@@ -11,8 +11,12 @@ class Alignment extends Conexion{
 
   public function getAll($data = []){
     try {
-      $consulta = $this->pdo->prepare("spu_listar_bandos_por_publishers(?)");
-      $consulta->execute();
+      $consulta = $this->pdo->prepare("CALL spu_listar_bandos_por_publishers(?)");
+      $consulta->execute(
+        array(
+          $data['id']
+        )
+      );
       return $consulta->fetchAll(PDO::FETCH_ASSOC);
     } catch (Exception $e) {
       die($e->getMessage());

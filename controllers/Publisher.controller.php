@@ -10,3 +10,15 @@ if(isset($_GET['operacion'])){
     echo json_encode($resultado);
   }
 }
+
+if (isset($_POST['operacion'])){
+  $publisher = new Publisher();
+
+  if($_POST['operacion'] == 'contarSuperHeroes'){
+    $publisher_id = [
+      "publisher_id" => $_POST["publisher_id"]
+    ];
+    $resultado = $publisher->getAllSuperHeroes($publisher_id);
+    echo json_encode($resultado);
+  }
+}

@@ -19,8 +19,8 @@
   </head>
 
   <body>
-    
-    <div class="conteiner">
+    <h1 class="text-center mt-5">Cantidad de Superheroes por Bandos</h1>
+    <div class="conteiner mt-5">
       <div>
         <div style="width: 70%; margin: auto;">
           <canvas id="lienzo"></canvas>
@@ -40,7 +40,7 @@
           }]
         }
       });
-
+     
       (function (){
       fetch(`../controllers/Bandos.controller.php?operacion=listarBandos`)
         .then(respuesta => respuesta.json())
@@ -48,6 +48,7 @@
           console.log(datos)
           grafico.data.labels = datos.map (bandos => bandos.nombre_bando)
           grafico.data.datasets[0].data = datos.map(bandos => bandos.superheroe)
+          
           grafico.update()
         })
         .catch(e => {

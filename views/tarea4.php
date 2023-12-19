@@ -19,34 +19,50 @@
   </head>
 
   <body>
-    
+    <h1 class="text-center mt-5">BUSCAR SUPERHEROES POR PUBLISHERS</h1>
     <div class="container">      
       <div class="p-5">
+        <span>Seleccione un publisher</span>
         <select class="form-select" aria-label="Default select example" id="publisher">                      
         </select>
       </div>
-      <div style="width: 70%; margin: auto;">
+      <div style="width: 50%; margin: auto;">
         <canvas id="lienzo"></canvas>
       </div>              
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-
+        const colores = [
+        'rgba(255, 99, 132, 0.7)',
+        'rgba(54, 162, 235, 0.7)',
+        'rgba(255, 206, 86, 0.7)',
+        'rgba(75, 192, 192, 0.7)',
+        'rgba(153, 102, 255, 0.7)',
+        'rgba(255, 159, 64, 0.7)'
+        ];
       document.addEventListener("DOMContentLoaded", ()=>{
         function $(id) { return document.querySelector(id)}
         const contexto = document.querySelector("#lienzo")
         const grafico = new Chart(contexto, {
-          type: 'bar',
+          type: 'pie',
           data: {
             labels: [],
             datasets: [{
-              label: "Bandos",
-              data: []
+              label: "SuperHeroes",
+              data: [],
+              backgroundColor: colores
             }]
           }
         });
 
+        // Almacena los datos acumulados
+        let datosAcumulados = {
+            labels: [],
+            data: []
+        };
+        
+        // PUBLISHERS -------
         (function (){
             fetch(`../controllers/Publisher.controller.php?operacion=listarPublishers`)
               .then(respuesta => respuesta.json())
@@ -58,26 +74,33 @@
                   tagOption.value = dato.id
                   tagOption.innerHTML = dato.publisher_name
                   $("#publisher").appendChild(tagOption)
+                  
                 });
               })
-          })()
+        })()
 
+        // SUPERHERO's
         const buscarBandos = ()=>{          
-          const parametros = new FormData()
-            parametros.append("operacion", "listarBandosPorPublisher")
-            parametros.append("id", $("#publisher").value)
+            const parametros = new FormData()
+            parametros.append("operacion", "contarSuperHeroes")
+            parametros.append("publisher_id", $("#publisher").value)
 
-          fetch(`../controllers/Alignment.controller.php`, {
+          fetch(`../controllers/Publisher.controller.php`, {
             method: "POST",
             body: parametros
           })
             .then(respuesta => respuesta.json())
             .then(datos => {
-              console.log(datos)
-              //CAMBIAR ESTO mas rato...
-              /* grafico.data.labels = datos.map (bandos => bandos.nombre_bando)
-              grafico.data.datasets[0].data = datos.map(bandos => bandos.superheroe)
-              grafico.update() */
+                console.log(datos)              
+                
+                // Actualizar los datos acumulados
+                datosAcumulados.labels = [...datosAcumulados.labels, ...datos.map(publishers => publishers.publisher_name)];
+                datosAcumulados.data = [...datosAcumulados.data, ...datos.map(publishers => publishers.superheroes)];
+
+                // Actualizar el gráfico
+                grafico.data.labels = datosAcumulados.labels;
+                grafico.data.datasets[0].data = datosAcumulados.data;
+                grafico.update();
             })
             .catch(e => {
               console.error(e)

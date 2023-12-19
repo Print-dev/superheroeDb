@@ -19,10 +19,11 @@
   </head>
 
   <body>
-    
+    <h1 class="text-center mt-5">Informacion de Superheroes</h1>
     <div class="container">
       <div class="">
         <div class="p-5">
+          <span>Eliga un publisher</span>
           <select class="form-select" aria-label="Default select example" id="publisher">                      
           </select>
         </div>
